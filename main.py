@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.routers import auth
+from app.routers import auth, reports
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -42,6 +42,7 @@ async def root():
     }
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
+app.include_router(reports.router, prefix="/api/reports", tags=["Reports"])
 
 if __name__ == "__main__":
     import uvicorn

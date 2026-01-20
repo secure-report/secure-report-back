@@ -17,8 +17,10 @@ except ServerSelectionTimeoutError as e:
 
 db = client[settings.MONGODB_DB_NAME]
 users_collection = db["users"]
+reports_collection = db["reports"]
 
 users_collection.create_index("email", unique=True)
+reports_collection.create_index("anonymousUserId")
 
 def get_user_by_email(email: str):
     """Obtiene usuario por email"""
@@ -45,6 +47,48 @@ def get_user_by_id(user_id: str):
         return users_collection.find_one({"_id": ObjectId(user_id)})
     except:
         return None
+
+
+# ===== FUNCIONES PARA REPORTES =====
+
+def generate_report_id() -> str:
+    """Genera un ID único para el reporte"""
+    import secrets
+    return f"rep_{secrets.token_hex(3)}"
+
+
+def create_report(anonymous_user_id: str, category: str, description: str,
+                 location: dict, address_reference: str, media: list) -> str:
+    """Crea un nuevo reporte y retorna su ID"""
+    report_id = generate_report_id()
+    now = datetime.utcnow()
+    
+    report_data = {
+        "_id": report_id,
+        "anonymousUserId": anonymous_user_id,
+        "category": category,
+        "description": description,
+        "location": location,
+        "addressReference": address_reference,
+        "media": media,
+        "status": "pending",
+        "createdAt": now,
+        "updatedAt": now
+    }
+    
+    reports_collection.insert_one(report_data)
+    return report_id
+
+
+def get_report_by_id(report_id: str):
+    """Obtiene un reporte por ID"""
+    return reports_collection.find_one({"_id": report_id})
+
+
+def get_reports_by_user(anonymous_user_id: str):
+    """Obtiene todos los reportes de un usuario anónimo"""
+    return list(reports_collection.find({"anonymousUserId": anonymous_user_id}).sort("createdAt", -1))
+
 
 def close_connection():
     """Cierra conexión a MongoDB"""
