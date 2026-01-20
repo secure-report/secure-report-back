@@ -1,0 +1,16 @@
+# ARCHIVO: secure-report-back/.gitignore
+
+.env
+.env.local
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.idea/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+*.log
+envNico
