@@ -8,3 +8,6 @@ bcrypt==4.1.1
 python-jose==3.3.0
 cryptography==41.0.7
 pydantic[email]
+cloudinary
+python-multipart==0.0.6
+cloudinary==1.32.0
