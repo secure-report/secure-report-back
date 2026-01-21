@@ -24,9 +24,7 @@ def get_user_by_email(email: str):
     """Obtiene usuario por email"""
     return users_collection.find_one({"email": email})
 
-def create_user(nombre: str, apellido: str, fecha_nacimiento: str, 
-                direccion: str, email: str, hashed_password: str) -> str:
-    """Crea nuevo usuario y retorna su ID"""
+def create_user(nombre, apellido, fecha_nacimiento, direccion, email, hashed_password):
     user_data = {
         "nombre": nombre,
         "apellido": apellido,
@@ -34,6 +32,7 @@ def create_user(nombre: str, apellido: str, fecha_nacimiento: str,
         "direccion": direccion,
         "email": email,
         "password": hashed_password,
+        "role": "admin",  # ← AGREGAR ESTO
         "created_at": datetime.utcnow()
     }
     result = users_collection.insert_one(user_data)
