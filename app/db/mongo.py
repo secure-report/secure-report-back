@@ -90,6 +90,11 @@ def get_reports_by_user(anonymous_user_id: str):
     return list(reports_collection.find({"anonymousUserId": anonymous_user_id}).sort("createdAt", -1))
 
 
+def get_all_reports():
+    """Obtiene todos los reportes sin filtro, ordenados por fecha de creación descendente"""
+    return list(reports_collection.find({}).sort("createdAt", -1))
+
+
 def close_connection():
     """Cierra conexión a MongoDB"""
     client.close()

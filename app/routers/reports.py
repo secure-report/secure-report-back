@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List
 from app.models.report import ReportCreate, ReportResponse
-from app.db.mongo import create_report, get_reports_by_user
+from app.db.mongo import create_report, get_reports_by_user, get_all_reports
 from datetime import datetime
 
 router = APIRouter()
@@ -69,6 +69,20 @@ def format_report_response(report: dict) -> dict:
         "createdAt": report["createdAt"],
         "updatedAt": report["updatedAt"]
     }
+
+
+@router.get("/", response_model=List[ReportResponse])
+async def list_all_reports():
+    """Lista todos los reportes sin filtro"""
+    try:
+        reports = get_all_reports()
+        return [format_report_response(report) for report in reports]
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al obtener los reportes: {str(e)}"
+        )
 
 
 def get_report_by_id(report_id: str):
