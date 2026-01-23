@@ -1,6 +1,6 @@
 # ARCHIVO: secure-report-back/app/db/mongo.py
 
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import ServerSelectionTimeoutError
 from app.core.config import settings
 from bson.objectid import ObjectId
@@ -93,6 +93,20 @@ def get_reports_by_user(anonymous_user_id: str):
 def get_all_reports():
     """Obtiene todos los reportes sin filtro, ordenados por fecha de creación descendente"""
     return list(reports_collection.find({}).sort("createdAt", -1))
+
+
+def update_report_status(report_id: str, status: str):
+    """Actualiza el estado de un reporte y retorna el documento actualizado."""
+    try:
+        now = datetime.utcnow()
+        updated = reports_collection.find_one_and_update(
+            {"_id": report_id},
+            {"$set": {"status": status, "updatedAt": now}},
+            return_document=ReturnDocument.AFTER
+        )
+        return updated
+    except Exception:
+        return None
 
 
 def close_connection():

@@ -2,8 +2,9 @@
 
 from fastapi import APIRouter, HTTPException, status
 from typing import List
-from app.models.report import ReportCreate, ReportResponse
-from app.db.mongo import create_report, get_reports_by_user, get_all_reports
+from pydantic import BaseModel
+from app.models.report import ReportCreate, ReportResponse, ReportStatus
+from app.db.mongo import create_report, get_reports_by_user, get_all_reports, update_report_status
 from datetime import datetime
 
 router = APIRouter()
@@ -82,6 +83,36 @@ async def list_all_reports():
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al obtener los reportes: {str(e)}"
+        )
+
+
+class StatusUpdate(BaseModel):
+    status: ReportStatus
+
+
+@router.patch("/{report_id}/status", response_model=ReportResponse)
+async def change_report_status(report_id: str, payload: StatusUpdate):
+    """Cambia el estado de un reporte.
+
+    Estados válidos: `pending`, `in_review`, `approved`, `rejected`, `resolved`
+    """
+    try:
+        updated = update_report_status(report_id, payload.status.value)
+
+        if not updated:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Reporte no encontrado o no se pudo actualizar"
+            )
+
+        return format_report_response(updated)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al actualizar el estado del reporte: {str(e)}"
         )
 
 

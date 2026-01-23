@@ -339,3 +339,78 @@ curl -X GET http://localhost:5000/api/reports/rep_98a21f
    ```bash
    GET /api/reports/user/{anonymousUserId}
    ```
+
+---
+
+## 5. Cambiar Estado de un Reporte
+
+Permite actualizar el estado de un reporte a uno de los valores válidos.
+
+### Postman
+```
+PATCH http://localhost:5000/api/reports/{report_id}/status
+```
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body (JSON):**
+```json
+{
+  "status": "in_review"
+}
+```
+
+---
+
+### cURL (Git Bash / Terminal)
+
+```bash
+curl -X PATCH http://localhost:5000/api/reports/rep_98a21f/status \
+  -H "Content-Type: application/json" \
+  -d '{"status": "resolved"}'
+```
+
+---
+
+### Estados válidos
+
+- `pending`
+- `in_review`
+- `approved`
+- `rejected`
+- `resolved`
+
+---
+
+### Respuesta Exitosa
+
+```json
+{
+  "_id": "rep_98a21f",
+  "anonymousUserId": "anon_7f93a2c1",
+  "category": "precios_abusivos",
+  "description": "El local cobra valores diferentes a los exhibidos en la percha.",
+  "location": {
+    "type": "Point",
+    "coordinates": [-78.4678, -0.1807]
+  },
+  "addressReference": "Sector La Mariscal, Quito",
+  "media": [],
+  "status": "resolved",
+  "createdAt": "2026-01-20T01:45:00.000Z",
+  "updatedAt": "2026-01-21T10:00:00.000Z"
+}
+```
+
+### Respuesta si no existe
+
+```json
+{
+  "detail": "Reporte no encontrado o no se pudo actualizar"
+}
+```
+
+---
