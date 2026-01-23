@@ -183,6 +183,100 @@ curl -X GET http://localhost:5000/api/reports/user/anon_123456
 
 ---
 
+## 3. Listar Todos los Reportes (sin filtro)
+
+### Postman
+```
+GET http://localhost:5000/api/reports/
+```
+
+**Headers:**
+- No requiere headers especiales
+
+---
+
+### cURL (Git Bash / Terminal)
+
+```bash
+curl -X GET http://localhost:5000/api/reports/
+```
+
+---
+
+### Respuesta Exitosa
+
+```json
+[
+  {
+    "_id": "rep_98a21f",
+    "anonymousUserId": "anon_7f93a2c1",
+    "category": "precios_abusivos",
+    "description": "El local cobra valores diferentes a los exhibidos en la percha.",
+    "location": {
+      "type": "Point",
+      "coordinates": [-78.4678, -0.1807]
+    },
+    "addressReference": "Sector La Mariscal, Quito",
+    "media": [],
+    "status": "pending",
+    "createdAt": "2026-01-20T01:45:00.000Z",
+    "updatedAt": "2026-01-20T01:45:00.000Z"
+  }
+]
+```
+
+---
+
+## 4. Obtener Reporte por ID
+
+### Postman
+```
+GET http://localhost:5000/api/reports/{report_id}
+```
+
+**Path Parameters:**
+- `report_id`: ID del reporte (ej: `rep_98a21f`)
+
+---
+
+### cURL (Git Bash / Terminal)
+
+```bash
+curl -X GET http://localhost:5000/api/reports/rep_98a21f
+```
+
+---
+
+### Respuesta Exitosa
+
+```json
+{
+  "_id": "rep_98a21f",
+  "anonymousUserId": "anon_7f93a2c1",
+  "category": "precios_abusivos",
+  "description": "El local cobra valores diferentes a los exhibidos en la percha.",
+  "location": {
+    "type": "Point",
+    "coordinates": [-78.4678, -0.1807]
+  },
+  "addressReference": "Sector La Mariscal, Quito",
+  "media": [],
+  "status": "pending",
+  "createdAt": "2026-01-20T01:45:00.000Z",
+  "updatedAt": "2026-01-20T01:45:00.000Z"
+}
+```
+
+**Respuesta si no existe:**
+
+```json
+{
+  "detail": "Reporte no encontrado"
+}
+```
+
+---
+
 ## Categorías Válidas
 
 - `precios_abusivos` - Precios abusivos

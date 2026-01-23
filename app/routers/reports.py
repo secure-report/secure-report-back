@@ -89,3 +89,26 @@ def get_report_by_id(report_id: str):
     """Obtiene un reporte por ID - importado desde mongo.py"""
     from app.db.mongo import get_report_by_id as mongo_get_report
     return mongo_get_report(report_id)
+
+
+@router.get("/{report_id}", response_model=ReportResponse)
+async def retrieve_report(report_id: str):
+    """Obtiene un reporte por su ID"""
+    try:
+        report = get_report_by_id(report_id)
+
+        if not report:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Reporte no encontrado"
+            )
+
+        return format_report_response(report)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al obtener el reporte: {str(e)}"
+        )
