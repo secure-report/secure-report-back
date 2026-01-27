@@ -2,8 +2,9 @@
 
 from fastapi import APIRouter, HTTPException, status
 from typing import List
-from app.models.report import ReportCreate, ReportResponse
-from app.db.mongo import create_report, get_reports_by_user
+from pydantic import BaseModel
+from app.models.report import ReportCreate, ReportResponse, ReportStatus
+from app.db.mongo import create_report, get_reports_by_user, get_all_reports, update_report_status
 from datetime import datetime
 
 router = APIRouter()
@@ -71,7 +72,74 @@ def format_report_response(report: dict) -> dict:
     }
 
 
+@router.get("/", response_model=List[ReportResponse])
+async def list_all_reports():
+    """Lista todos los reportes sin filtro"""
+    try:
+        reports = get_all_reports()
+        return [format_report_response(report) for report in reports]
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al obtener los reportes: {str(e)}"
+        )
+
+
+class StatusUpdate(BaseModel):
+    status: ReportStatus
+
+
+@router.patch("/{report_id}/status", response_model=ReportResponse)
+async def change_report_status(report_id: str, payload: StatusUpdate):
+    """Cambia el estado de un reporte.
+
+    Estados válidos: `pending`, `in_review`, `approved`, `rejected`, `resolved`
+    """
+    try:
+        updated = update_report_status(report_id, payload.status.value)
+
+        if not updated:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Reporte no encontrado o no se pudo actualizar"
+            )
+
+        return format_report_response(updated)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al actualizar el estado del reporte: {str(e)}"
+        )
+
+
 def get_report_by_id(report_id: str):
     """Obtiene un reporte por ID - importado desde mongo.py"""
     from app.db.mongo import get_report_by_id as mongo_get_report
     return mongo_get_report(report_id)
+
+
+@router.get("/{report_id}", response_model=ReportResponse)
+async def retrieve_report(report_id: str):
+    """Obtiene un reporte por su ID"""
+    try:
+        report = get_report_by_id(report_id)
+
+        if not report:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Reporte no encontrado"
+            )
+
+        return format_report_response(report)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al obtener el reporte: {str(e)}"
+        )
