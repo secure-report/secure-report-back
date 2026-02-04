@@ -1,5 +1,3 @@
-# ARCHIVO: secure-report-back/main.py
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
@@ -21,12 +19,15 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup():
-    """Conecta a MongoDB al iniciar"""
-    from app.db import mongo
+    """
+    Inicializa recursos globales (MongoDB)
+    """
+    print("🚀 Iniciando aplicación FastAPI")
+    from app.db import mongo  # fuerza carga y conexión
+    print("✅ MongoDB inicializado en startup")
 
 @app.get("/api/health")
 async def health():
-    """Verifica estado del servidor"""
     return {
         "status": "ok",
         "app": settings.APP_NAME,
@@ -35,7 +36,6 @@ async def health():
 
 @app.get("/")
 async def root():
-    """Endpoint raíz"""
     return {
         "message": f"Bienvenido a {settings.APP_NAME}",
         "docs": "/docs"
@@ -47,4 +47,9 @@ app.include_router(media.router, prefix="/api/media", tags=["Media"])
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=True)
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=5000,
+        reload=True
+    )
