@@ -8,6 +8,7 @@ from enum import Enum
 
 class ReportCategory(str, Enum):
     """Categorías de reportes"""
+    ACOSO = "acoso"
     PRECIOS_ABUSIVOS = "precios_abusivos"
     MALA_ATENCION = "mala_atencion"
     PRODUCTOS_DEFECTUOSOS = "productos_defectuosos"
@@ -76,8 +77,8 @@ class ReportInDB(ReportBase):
             "example": {
                 "_id": "rep_98a21f",
                 "anonymousUserId": "anon_7f93a2c1",
-                "category": "precios_abusivos",
-                "description": "El local cobra valores diferentes a los exhibidos en la percha.",
+                "category": "acoso",
+                "description": "Persona del establecimiento realizó comentarios y gestos de naturaleza sexual y/o intimidatoria hacia el denunciante.",
                 "location": {
                     "type": "Point",
                     "coordinates": [-78.4678, -0.1807]

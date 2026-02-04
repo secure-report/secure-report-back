@@ -1,5 +1,7 @@
 # Documentación de Endpoints - Reports (Reportes)
 
+Nota: El enfoque ahora incluye denuncias en general, con prioridad en casos de `acoso` (hostigamiento, abusos, amenazas). Use la categoría `acoso` cuando la denuncia implique conductas de acoso, amenazas, violencia o abuso sexual. También puede reportar incidentes relacionados con consumo o servicios.
+
 ## 1. Crear un Reporte
 
 ### Postman
@@ -12,25 +14,21 @@ POST http://localhost:5000/api/reports/
 Content-Type: application/json
 ```
 
-**Body (JSON):**
+**Body (JSON) - Ejemplo (acoso):**
 ```json
 {
   "anonymousUserId": "anon_7f93a2c1",
-  "category": "precios_abusivos",
-  "description": "El local cobra valores diferentes a los exhibidos en la percha.",
+  "category": "acoso",
+  "description": "Un empleado del local realizó comentarios sexuales y agresivos hacia la persona denunciante. Se produjo contacto no consentido y amenazas verbales.",
   "location": {
     "type": "Point",
     "coordinates": [-78.4678, -0.1807]
   },
-  "addressReference": "Sector La Mariscal, Quito",
+  "addressReference": "Frente al local, Av. Ejemplo",
   "media": [
     {
       "type": "image",
-      "url": "https://res.cloudinary.com/dupo3axec/image/upload/v123/secure-report/img1.jpg"
-    },
-    {
-      "type": "video",
-      "url": "https://res.cloudinary.com/dupo3axec/video/upload/v124/secure-report/video1.mp4"
+      "url": "https://res.cloudinary.com/dupo3axec/image/upload/v123/secure-report/acoso1.jpg"
     }
   ]
 }
@@ -279,6 +277,7 @@ curl -X GET http://localhost:5000/api/reports/rep_98a21f
 
 ## Categorías Válidas
 
+- `acoso` - Acoso, violencia verbal o física, hostigamiento, amenazas
 - `precios_abusivos` - Precios abusivos
 - `mala_atencion` - Mala atención
 - `productos_defectuosos` - Productos defectuosos
