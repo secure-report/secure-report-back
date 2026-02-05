@@ -11,36 +11,25 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: Deploy to EC2
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER }}
-          EC2_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-          DEBUG: ${{ secrets.DEBUG }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          MONGODB_DB_NAME: ${{ secrets.MONGODB_DB_NAME }}
-          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          GOOGLE_MODEL: ${{ secrets.GOOGLE_MODEL }}
-          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
           
+          # Usamos un bloque SSH más robusto
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'SSH_END'
             cd /home/ubuntu
+            
+            # Borrar carpeta vieja si existe
             rm -rf secure-report-back
             
-            # Usamos el token para clonar sin que pida usuario/password
+            # CLONAR usando el TOKEN (Asegúrate de tener el secreto GH_TOKEN en GitHub)
             git clone --depth 1 -b main https://${{ secrets.GH_TOKEN }}@github.com/wnliberio/secure-report-back.git
             
             cd secure-report-back
             
-            # Creamos el .env usando las variables que pasamos al inicio
+            # Crear el archivo .env uno por uno (forma más segura)
             echo "DEBUG=${{ secrets.DEBUG }}" > .env
             echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
             echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
@@ -52,7 +41,8 @@ jobs:
             echo "GOOGLE_MODEL=${{ secrets.GOOGLE_MODEL }}" >> .env
             echo "ADMIN_API_KEY=${{ secrets.ADMIN_API_KEY }}" >> .env
 
-            docker-compose down
-            docker system prune -a -f
-            docker-compose up -d --build
+            # Levantar contenedores (usando sudo si no hiciste el usermod)
+            sudo docker-compose down
+            sudo docker system prune -f
+            sudo docker-compose up -d --build
           SSH_END
