@@ -1,4 +1,6 @@
 # Entornos / variables
+envBack/
+envBack
 .env
 .env.*
 venv/

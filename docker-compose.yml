@@ -1,33 +1,29 @@
-version: "3.8"
-
-services:
-  app:
-    build: .
-    container_name: secure-report-api
-    ports:
-      - "5000:5000"
-    env_file:
-      - .env
-    depends_on:
-      - mongo
-    networks:
-      - secure-report-network
-    restart: unless-stopped
-
-  mongo:
-    image: mongo:7.0
-    container_name: secure-report-mongo
-    ports:
-    - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - secure-report-network
-    restart: unless-stopped
-
-volumes:
-  mongo-data:
+version: '3.8'
 
 networks:
-  secure-report-network:
+  securereport-net:
     driver: bridge
+    name: securereport-net
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: secure-report-backend
+    ports:
+      - "5000:5000"
+    networks:
+      - securereport-net
+    environment:
+      - DEBUG=true
+      - SECRET_KEY=clave-secreta-cambiar-en-produccion
+      - MONGODB_URI=mongodb+srv://securereport_user:fm9MuCQBPsVt5wk@clustersecurereport.qzokhor.mongodb.net/securereport?appName=ClusterSecureReport
+      - MONGODB_DB_NAME=securereport
+      - CLOUDINARY_CLOUD_NAME=dupo3axec
+      - CLOUDINARY_API_KEY=977674224524364
+      - CLOUDINARY_API_SECRET=VNggHZ-Y9wyS6I3p9IAQkmIuapY
+      - GOOGLE_API_KEY=AIzaSyB1LiiHGZv16iCjLQLB606YvcWJkCg6Poc
+      - GOOGLE_MODEL=gemini-2.5-flash
+      - ADMIN_API_KEY=550e8400-e29b-41d4-a716-446655440000
+    restart: unless-stopped

@@ -1,5 +1,4 @@
 # ARCHIVO: secure-report-back/app/core/config.py
-
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
@@ -21,6 +20,13 @@ class Settings(BaseSettings):
     CLOUDINARY_CLOUD_NAME: str
     CLOUDINARY_API_KEY: str
     CLOUDINARY_API_SECRET: str
+    
+    # Google AI
+    GOOGLE_API_KEY: str
+    GOOGLE_MODEL: str = "gemini-2.5-flash"
+    
+    # Admin
+    ADMIN_API_KEY: str
 
     class Config:
         env_file = ".env"
