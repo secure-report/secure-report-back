@@ -77,6 +77,7 @@ def get_user_by_id(user_id: str):
 
 # ===== FUNCIONES REPORTES =====
 
+
 def generate_report_id() -> str:
     import secrets
     return f"rep_{secrets.token_hex(3)}"
