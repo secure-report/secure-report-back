@@ -21,15 +21,15 @@ jobs:
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'SSH_END'
             cd /home/ubuntu
             
-            # Borrar carpeta vieja si existe
-            rm -rf secure-report-back
+            # 1. Borramos la carpeta por si acaso quedó algo de intentos fallidos
+            sudo rm -rf secure-report-back
             
-            # CLONAR usando el TOKEN (Asegúrate de tener el secreto GH_TOKEN en GitHub)
-            git clone --depth 1 -b main https://${{ secrets.GH_TOKEN }}@github.com/wnliberio/secure-report-back.git
+            # 2. Clonamos la RAMA especifica (feat/login) usando la URL correcta del repo
+            git clone -b feat/login https://github.com/secure-report/secure-report-back.git
             
             cd secure-report-back
             
-            # Crear el archivo .env uno por uno (forma más segura)
+            # 3. Creamos el .env (Asegúrate de que tus secrets en GitHub tengan estos nombres)
             echo "DEBUG=${{ secrets.DEBUG }}" > .env
             echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
             echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
@@ -41,7 +41,7 @@ jobs:
             echo "GOOGLE_MODEL=${{ secrets.GOOGLE_MODEL }}" >> .env
             echo "ADMIN_API_KEY=${{ secrets.ADMIN_API_KEY }}" >> .env
 
-            # Levantar contenedores (usando sudo si no hiciste el usermod)
+            # 4. Ejecutamos Docker
             sudo docker-compose down
             sudo docker system prune -f
             sudo docker-compose up -d --build
