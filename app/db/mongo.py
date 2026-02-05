@@ -16,9 +16,9 @@ def _mask_mongo_uri(uri: str) -> str:
         return "***"
 
 try:
-    print("🔌 Iniciando conexión MongoDB...")
-    print(f"📡 URI: {_mask_mongo_uri(settings.MONGODB_URI)}")
-    print(f"🗄️ DB: {settings.MONGODB_DB_NAME}")
+    print("> Iniciando conexión MongoDB...")
+    print(f"> URI: {_mask_mongo_uri(settings.MONGODB_URI)}")
+    print(f"> DB: {settings.MONGODB_DB_NAME}")
 
     client = MongoClient(
         settings.MONGODB_URI,
@@ -27,10 +27,10 @@ try:
 
     client.admin.command("ping")
 
-    print("✅ Conexión MongoDB establecida correctamente")
+    print("> Conexión MongoDB establecida correctamente")
 
 except ServerSelectionTimeoutError as e:
-    print("❌ ERROR: No se pudo conectar a MongoDB")
+    print("X ERROR: No se pudo conectar a MongoDB")
     print(f"Detalle: {e}")
     raise
 
@@ -45,7 +45,7 @@ reports_collection = db["reports"]
 users_collection.create_index("email", unique=True)
 reports_collection.create_index("anonymousUserId")
 
-print("📂 Colecciones activas: users, reports")
+print("> Colecciones activas: users, reports")
 
 # ===== FUNCIONES USUARIOS =====
 
@@ -144,5 +144,5 @@ def update_report_status(report_id: str, status: str):
 
 
 def close_connection():
-    print("🔒 Cerrando conexión MongoDB")
+    print("> Cerrando conexión MongoDB")
     client.close()
