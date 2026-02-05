@@ -4,15 +4,15 @@ from uuid import uuid4
 from datetime import datetime
 import time
 import fitz
-import google.generativeai as genai
+from openai import OpenAI
 from app.core.config import settings
 from app.db.mongo import db
 from app.models.chat import ChatRequest, ChatResponse, UploadResponse
 
 router = APIRouter()
 
-# Configurar Google AI
-genai.configure(api_key=settings.GOOGLE_API_KEY)
+# Configurar OpenAI
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 SALUDO_INICIAL = "Hola, soy ChatSeguro. Estoy acá para escucharte y ayudarte con lo que necesites. Todo lo que me digas es privado y seguro. ¿En qué puedo apoyarte?"
 
@@ -183,10 +183,18 @@ PREGUNTA/COMENTARIO DEL USUARIO:
 Responde de forma natural, empática y conversacional. Usa la información disponible para ayudar, pero no menciones que viene de "documentos".
 """
         
-        # Generar respuesta
-        model = genai.GenerativeModel(settings.GOOGLE_MODEL)
-        response = model.generate_content(prompt)
-        answer = limpiar_respuesta(response.text)
+        # Generar respuesta con OpenAI
+        response = client.chat.completions.create(
+            model=settings.OPENAI_MODEL,
+            messages=[
+                {"role": "system", "content": PROMPT_INICIAL},
+                {"role": "user", "content": f"{context_text}\n\n{formatted_history}\n\nPregunta: {req.message}"}
+            ],
+            temperature=0.7,
+            max_tokens=1000
+        )
+        
+        answer = limpiar_respuesta(response.choices[0].message.content)
         
         # Guardar en historial global
         save_message("global_chat", "user", req.message)

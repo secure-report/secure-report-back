@@ -37,8 +37,8 @@ jobs:
             echo "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" >> .env
             echo "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" >> .env
             echo "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" >> .env
-            echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> .env
-            echo "GOOGLE_MODEL=${{ secrets.GOOGLE_MODEL }}" >> .env
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+            echo "OPENAI_MODEL=${{ secrets.OPENAI_MODEL }}" >> .env
             echo "ADMIN_API_KEY=${{ secrets.ADMIN_API_KEY }}" >> .env
 
             # 4. Ejecutamos Docker

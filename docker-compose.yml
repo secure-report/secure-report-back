@@ -16,14 +16,17 @@ services:
     networks:
       - securereport-net
     environment:
-      - DEBUG=true
-      - SECRET_KEY=clave-secreta-cambiar-en-produccion
-      - MONGODB_URI=mongodb+srv://securereport_user:fm9MuCQBPsVt5wk@clustersecurereport.qzokhor.mongodb.net/securereport?appName=ClusterSecureReport
-      - MONGODB_DB_NAME=securereport
-      - CLOUDINARY_CLOUD_NAME=dupo3axec
-      - CLOUDINARY_API_KEY=977674224524364
-      - CLOUDINARY_API_SECRET=VNggHZ-Y9wyS6I3p9IAQkmIuapY
-      - GOOGLE_API_KEY=AIzaSyB1LiiHGZv16iCjLQLB606YvcWJkCg6Poc
-      - GOOGLE_MODEL=gemini-2.5-flash
-      - ADMIN_API_KEY=550e8400-e29b-41d4-a716-446655440000
+      # No pongas las claves aquí, usa las variables
+      - DEBUG=${DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - MONGODB_URI=${MONGODB_URI}
+      - MONGODB_DB_NAME=${MONGODB_DB_NAME}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_MODEL=${GOOGLE_MODEL}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
     restart: unless-stopped
