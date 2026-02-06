@@ -166,7 +166,3 @@ El proyecto incluye GitHub Actions para despliegue automático:
 - Los archivos multimedia se almacenan en Cloudinary (carpeta secure-report)
 - MongoDB debe tener índices creados automáticamente
 - El sistema permite reportes completamente anónimos
-
-## Contacto
-
-Para preguntas o problemas, revisar la documentación en /docs o consultar los archivos en la carpeta docs/
