@@ -1,5 +1,4 @@
 # ARCHIVO: secure-report-back/app/core/config.py
-
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
@@ -21,6 +20,13 @@ class Settings(BaseSettings):
     CLOUDINARY_CLOUD_NAME: str
     CLOUDINARY_API_KEY: str
     CLOUDINARY_API_SECRET: str
+    
+    # OpenAI
+    OPENAI_API_KEY: str
+    OPENAI_MODEL: str = "gpt-4-turbo"
+    
+    # Admin
+    ADMIN_API_KEY: str
 
     class Config:
         env_file = ".env"
