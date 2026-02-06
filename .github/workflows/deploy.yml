@@ -1,0 +1,48 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [feat/login]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Deploy to EC2
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          
+          # Usamos un bloque SSH más robusto
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'SSH_END'
+            cd /home/ubuntu
+            
+            # 1. Borramos la carpeta por si acaso quedó algo de intentos fallidos
+            sudo rm -rf secure-report-back
+            
+            # 2. Clonamos la RAMA especifica (feat/login) usando la URL correcta del repo
+            git clone -b feat/login https://github.com/secure-report/secure-report-back.git
+            
+            cd secure-report-back
+            
+            # 3. Creamos el .env (Asegúrate de que tus secrets en GitHub tengan estos nombres)
+            echo "DEBUG=${{ secrets.DEBUG }}" > .env
+            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+            echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+            echo "MONGODB_DB_NAME=${{ secrets.MONGODB_DB_NAME }}" >> .env
+            echo "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" >> .env
+            echo "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" >> .env
+            echo "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" >> .env
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+            echo "OPENAI_MODEL=${{ secrets.OPENAI_MODEL }}" >> .env
+            echo "ADMIN_API_KEY=${{ secrets.ADMIN_API_KEY }}" >> .env
+
+            # 4. Ejecutamos Docker
+            sudo docker-compose down
+            sudo docker system prune -f
+            sudo docker-compose up -d --build
+          SSH_END

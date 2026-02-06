@@ -1,0 +1,32 @@
+version: '3.8'
+
+networks:
+  securereport-net:
+    driver: bridge
+    name: securereport-net
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: secure-report-backend
+    ports:
+      - "5000:5000"
+    networks:
+      - securereport-net
+    environment:
+      # No pongas las claves aquí, usa las variables
+      - DEBUG=${DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - MONGODB_URI=${MONGODB_URI}
+      - MONGODB_DB_NAME=${MONGODB_DB_NAME}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_MODEL=${GOOGLE_MODEL}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+    restart: unless-stopped
